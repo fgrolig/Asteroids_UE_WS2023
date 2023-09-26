@@ -14,6 +14,8 @@ public class Game : MonoBehaviour
 
 	public static GameState CurrentGameState { get; private set; } = GameState.Active;
 
+	public int CurrentPlayerLifes => currentPlayerLifes;
+
 	[SerializeField]
 	private Player player = default;
 

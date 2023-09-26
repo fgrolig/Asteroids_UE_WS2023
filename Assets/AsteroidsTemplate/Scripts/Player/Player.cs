@@ -31,6 +31,9 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private float rotationForce = 200f;
 
+	[SerializeField] 
+	private bool destroyOnCollision = true;
+
 	[SerializeField]
 	private AudioClip destroyAudioClip = default;
 
@@ -47,23 +50,36 @@ public class Player : MonoBehaviour
 
 	private bool IsInvulnerable { get; set; }
 
+	[SerializeField]
+	private Game game;
+
 	private void Awake()
 	{
 		playerRigidbody2D = GetComponent<Rigidbody2D>();
 
 		IsInvulnerable = false;
+		if(game == null) game = GameObject.Find("Game").GetComponent<Game>();
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (IsInvulnerable == false)
-		{ 
-			DestroyPlayer();
+		{
+			if (destroyOnCollision || game.CurrentPlayerLifes == 1)
+			{
+				DestroyPlayer();
+			}
+			else
+			{
+				OnPlayerDestroy?.Invoke();
+				StartCoroutine(TemporaryInvulnerability());
+			}
 		}
 	}
 
 	public void Respawn()
 	{
+		if (!destroyOnCollision) return;
 		transform.position = new Vector3(0f, 0f, transform.position.z);
 		transform.rotation = Quaternion.identity;
 		gameObject.SetActive(true);
