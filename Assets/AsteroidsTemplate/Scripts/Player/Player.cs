@@ -22,6 +22,9 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private SpriteRenderer playerSpriteRenderer = default;
 
+	[SerializeField] 
+	private bool shipBackwardsAllowed = false;
+	
 	[SerializeField]
 	private float mainForce = 1000f;
 
@@ -77,7 +80,10 @@ public class Player : MonoBehaviour
 				forceDirectionVector = Vector2.up;
 				break;
 			case ForceDirection.Down:
-				forceDirectionVector = Vector2.down;
+				if (shipBackwardsAllowed)
+				{
+					forceDirectionVector = Vector2.down;
+				}
 				break;
 			default:
 				Debug.Assert(false, "Unprocessed force direction case!");
