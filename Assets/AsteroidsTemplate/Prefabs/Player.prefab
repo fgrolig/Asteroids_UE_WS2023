@@ -220,6 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSpriteRenderer: {fileID: 0}
+  shipBackwardsAllowed: 0
   mainForce: 1000
   rotationForce: 275
   destroyAudioClip: {fileID: 8300000, guid: ed666941707abcc45af72541537cfcdc, type: 3}
@@ -284,7 +285,7 @@ GameObject:
   - component: {fileID: 7687375091095455804}
   - component: {fileID: 9064195086049626791}
   m_Layer: 8
-  m_Name: Shouting Source
+  m_Name: Shooting Source
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
