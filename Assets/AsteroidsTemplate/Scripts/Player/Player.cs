@@ -7,13 +7,15 @@ public class Player : MonoBehaviour
 	public enum ForceDirection
 	{
 		Up,
-		Down
+		Down,
+		None
 	}
 
 	public enum RotationDirection
 	{
 		Right,
-		Left
+		Left,
+		None
 	}
 
 	public delegate void PlayerDestroy();
@@ -46,6 +48,9 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private int InvulnerableBlinkNumber = 3;
 
+	[SerializeField] 
+	private Animator anim;
+
 	private Rigidbody2D playerRigidbody2D;
 
 	private bool IsInvulnerable { get; set; }
@@ -59,6 +64,7 @@ public class Player : MonoBehaviour
 
 		IsInvulnerable = false;
 		if(game == null) game = GameObject.Find("Game").GetComponent<Game>();
+		if (anim == null) anim = GetComponent<Animator>();
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
@@ -91,20 +97,29 @@ public class Player : MonoBehaviour
 	{
 
 		Vector2 forceDirectionVector = Vector2.zero;
+		anim.SetFloat("CurrentSpeed", playerRigidbody2D.velocity.magnitude);
+
 		switch (forceDirection)
 		{
 			case ForceDirection.Up:
 				forceDirectionVector = Vector2.up;
+				anim.SetFloat("InputSpeed", 1f);
 				break;
 			case ForceDirection.Down:
 				if (shipBackwardsAllowed)
 				{
 					forceDirectionVector = Vector2.down;
+					anim.SetFloat("InputSpeed", -1f);
+				}
+				else
+				{
+					anim.SetFloat("InputSpeed", 0f);
+					return;
 				}
 				break;
-			default:
-				Debug.Assert(false, "Unprocessed force direction case!");
-				break;
+			case ForceDirection.None:
+				anim.SetFloat("InputSpeed", 0f);
+				return;
 		}
 
 		playerRigidbody2D.AddRelativeForce(mainForce * Time.deltaTime * forceDirectionVector);
@@ -120,6 +135,8 @@ public class Player : MonoBehaviour
 			float newVelocity = (playerRigidbody2D.velocity.y > 0) ? maxAxisVelocity : -1 * maxAxisVelocity;
 			playerRigidbody2D.velocity = new Vector2(playerRigidbody2D.velocity.x, newVelocity);
 		}
+		
+		anim.SetFloat("CurrentSpeed", playerRigidbody2D.velocity.magnitude);
 	}
 
 	public void AddRotation(RotationDirection rotationDirection)
@@ -133,10 +150,12 @@ public class Player : MonoBehaviour
 			case RotationDirection.Left:
 				rotationDirectionValue = 1f;
 				break;
-			default:
-				Debug.Assert(false, "Unprocessed rotation direction case!");
+			case RotationDirection.None:
+				rotationDirectionValue = 0f;
 				break;
 		}
+
+		anim.SetFloat("Rotation", rotationDirectionValue);
 
 		playerRigidbody2D.rotation += rotationForce * Time.deltaTime * rotationDirectionValue;
 	}

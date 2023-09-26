@@ -21,9 +21,19 @@ public class PlayerInputController : MonoBehaviour
 			{
 				player.AddRelativeForce(Player.ForceDirection.Up);
 			}
+
+			if (Input.GetAxisRaw("Vertical") == 0)
+			{
+				player.AddRelativeForce(Player.ForceDirection.None);
+			}
 			if (Input.GetAxisRaw("Horizontal") > 0)
 			{
 				player.AddRotation(Player.RotationDirection.Right);
+			}
+
+			if (Input.GetAxisRaw("Horizontal") == 0)
+			{
+				player.AddRotation(Player.RotationDirection.None);
 			}
 			if (Input.GetAxisRaw("Vertical") < 0)
 			{
