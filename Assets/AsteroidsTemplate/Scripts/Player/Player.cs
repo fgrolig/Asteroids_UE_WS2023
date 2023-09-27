@@ -24,6 +24,8 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private SpriteRenderer playerSpriteRenderer = default;
 
+	[Header("Movement Settings")]
+
 	[SerializeField] 
 	private bool shipBackwardsAllowed = false;
 	
@@ -33,20 +35,30 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private float rotationForce = 200f;
 
+	[SerializeField]
+	private float maxAxisVelocity = 42f;
+
+	[Header("Destruction Settings")]
 	[SerializeField] 
 	private bool destroyOnCollision = true;
 
 	[SerializeField]
-	private AudioClip destroyAudioClip = default;
+	private GameObject objectToSpawnOnDestruction;
+
+	[Tooltip("Time until the time spawned object is destroyed. Negative Values mean it will not be destroyed.")]
+	[SerializeField]
+	private float timeUntilDestroyObject = -1f;
 
 	[SerializeField]
-	private float maxAxisVelocity = 42f;
+	private AudioClip destroyAudioClip = default;
 
 	[SerializeField]
 	private float respawnInvulnerableTime = 3f; // In seconds
 
 	[SerializeField]
 	private int InvulnerableBlinkNumber = 3;
+	
+	[Header("Setup")]
 
 	[SerializeField] 
 	private Animator anim;
@@ -165,6 +177,16 @@ public class Player : MonoBehaviour
 		if (destroyAudioClip != null)
 		{
 			AudioManager.Instance.EffectsAudioSource.PlayOneShot(destroyAudioClip);
+		}
+
+		if(objectToSpawnOnDestruction != null)
+		{
+			Instantiate(objectToSpawnOnDestruction, transform.position, Quaternion.identity);
+
+			if (timeUntilDestroyObject >= 0)
+			{
+				Destroy(objectToSpawnOnDestruction,timeUntilDestroyObject);
+			}
 		}
 
 		OnPlayerDestroy?.Invoke();
