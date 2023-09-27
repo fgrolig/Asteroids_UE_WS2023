@@ -45,6 +45,14 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private GameObject objectToSpawnOnDestruction;
 
+	[Header("Objects to enable on Collision")]
+	[SerializeField]
+	private GameObject objectToEnableAt3HP;
+	[SerializeField]
+	private GameObject objectToEnableAt2HP;
+	[SerializeField]
+	private GameObject objectToEnableAt1HP;
+
 	[Tooltip("Time until the time spawned object is destroyed. Negative Values mean it will not be destroyed.")]
 	[SerializeField]
 	private float timeUntilDestroyObject = -1f;
@@ -72,6 +80,10 @@ public class Player : MonoBehaviour
 
 	private void Awake()
 	{
+		if(objectToEnableAt3HP != null) objectToEnableAt3HP.SetActive(true); 
+		if(objectToEnableAt2HP != null) objectToEnableAt2HP.SetActive(false); 
+		if(objectToEnableAt1HP != null) objectToEnableAt1HP.SetActive(false); 
+			
 		playerRigidbody2D = GetComponent<Rigidbody2D>();
 
 		IsInvulnerable = false;
@@ -98,6 +110,25 @@ public class Player : MonoBehaviour
 
 	public void Respawn()
 	{
+		switch (game.CurrentPlayerLifes)
+		{
+			case 3:
+				if(objectToEnableAt3HP != null) objectToEnableAt3HP.SetActive(true); 
+				if(objectToEnableAt2HP != null) objectToEnableAt2HP.SetActive(false); 
+				if(objectToEnableAt1HP != null) objectToEnableAt1HP.SetActive(false);
+				break;
+			case 2:
+				if(objectToEnableAt3HP != null) objectToEnableAt3HP.SetActive(false); 
+				if(objectToEnableAt2HP != null) objectToEnableAt2HP.SetActive(true); 
+				if(objectToEnableAt1HP != null) objectToEnableAt1HP.SetActive(false);
+				break;
+			case 1:
+				if(objectToEnableAt3HP != null) objectToEnableAt3HP.SetActive(false); 
+				if(objectToEnableAt2HP != null) objectToEnableAt2HP.SetActive(false); 
+				if(objectToEnableAt1HP != null) objectToEnableAt1HP.SetActive(true);
+				break;
+				
+		}
 		if (!destroyOnCollision) return;
 		transform.position = new Vector3(0f, 0f, transform.position.z);
 		transform.rotation = Quaternion.identity;
