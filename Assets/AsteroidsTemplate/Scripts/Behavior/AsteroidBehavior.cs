@@ -18,6 +18,12 @@ public class AsteroidBehavior : MonoBehaviour
 	[SerializeField]
 	private int shardsNumber = 3;
 
+	[SerializeField] 
+	private GameObject objectToSpawnOnDestruction;
+
+	[SerializeField] 
+	private float timeUntilDestroySpawnedObject = -1f;
+
 	private Rigidbody2D asteroidRigidbody2D;
 
 	private void Awake()
@@ -28,6 +34,16 @@ public class AsteroidBehavior : MonoBehaviour
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		AudioManager.Instance.EffectsAudioSource.PlayOneShot(destroyAudioClip);
+
+		if (objectToSpawnOnDestruction != null)
+		{
+			Instantiate(objectToSpawnOnDestruction, transform.position, Quaternion.identity);
+
+			if (timeUntilDestroySpawnedObject >= 0)
+			{
+				Destroy(objectToSpawnOnDestruction, timeUntilDestroySpawnedObject);
+			}
+		}
 
 		if (shardPool != null)
 		{
