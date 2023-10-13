@@ -87,7 +87,16 @@ public class Player : MonoBehaviour
 		playerRigidbody2D = GetComponent<Rigidbody2D>();
 
 		IsInvulnerable = false;
-		if(game == null) game = GameObject.Find("Game").GetComponent<Game>();
+		GameObject gameHolder = null;
+		if(game == null) gameHolder = GameObject.Find("Game");
+		if (gameHolder != null)
+		{
+			game = gameHolder.GetComponent<Game>();
+		}
+		else
+		{
+			Debug.LogError("Did not find a 'Game' component in your scene!");
+		}
 		if (anim == null) anim = GetComponent<Animator>();
 	}
 
