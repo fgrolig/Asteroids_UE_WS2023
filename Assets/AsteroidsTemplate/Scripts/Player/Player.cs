@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
 
 	[Tooltip("Time until the time spawned object is destroyed. Negative Values mean it will not be destroyed.")]
 	[SerializeField]
-	private float timeUntilDestroyObject = -1f;
+	private float timeUntilDestroySpawnedObject = -1f;
 
 	[SerializeField]
 	private AudioClip destroyAudioClip = default;
@@ -87,16 +87,21 @@ public class Player : MonoBehaviour
 		playerRigidbody2D = GetComponent<Rigidbody2D>();
 
 		IsInvulnerable = false;
-		GameObject gameHolder = null;
-		if(game == null) gameHolder = GameObject.Find("Game");
-		if (gameHolder != null)
+
+		if (game == null)
 		{
-			game = gameHolder.GetComponent<Game>();
+			GameObject gameHolder = null;
+			gameHolder = GameObject.Find("Game");
+			if (gameHolder != null)
+			{
+				game = gameHolder.GetComponent<Game>();
+			}
+			else
+			{
+				Debug.LogError("Did not find a 'Game' component in your scene!");
+			}
 		}
-		else
-		{
-			Debug.LogError("Did not find a 'Game' component in your scene!");
-		}
+		
 		if (anim == null) anim = GetComponent<Animator>();
 	}
 
@@ -221,11 +226,11 @@ public class Player : MonoBehaviour
 
 		if(objectToSpawnOnDestruction != null)
 		{
-			Instantiate(objectToSpawnOnDestruction, transform.position, Quaternion.identity);
+			GameObject spawnedObject = Instantiate(objectToSpawnOnDestruction, transform.position, Quaternion.identity);
 
-			if (timeUntilDestroyObject >= 0)
+			if (timeUntilDestroySpawnedObject >= 0)
 			{
-				Destroy(objectToSpawnOnDestruction,timeUntilDestroyObject);
+				Destroy(spawnedObject,timeUntilDestroySpawnedObject);
 			}
 		}
 
