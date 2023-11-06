@@ -2,6 +2,9 @@
 
 public class AsteroidSpawner : MonoBehaviour
 {
+	public bool refillAsteroidsAtThreshold = false;
+	public int refillThreshold = 2;
+	
 	[SerializeField]
 	private Pool asteroidPool = default;
 
@@ -31,7 +34,7 @@ public class AsteroidSpawner : MonoBehaviour
 		ySpawnPadding = ySpawnPaddingFactor * Mathf.Abs(topRightBound.y - bottomLeftBound.y);
 	}
 
-	public int SpawnAsteroids(AsteroidBehavior.AsteroidDestroy onAsteroidDestroyCallback)
+	public int SpawnAsteroids(AsteroidBehavior.AsteroidDestroy onAsteroidDestroyCallback, int currentAsteroidAmount = 0)
 	{
 		Vector3 spawnPosition = new Vector3();
 		spawnPosition.z = transform.position.z;
@@ -42,7 +45,8 @@ public class AsteroidSpawner : MonoBehaviour
 		float xIndent;
 		float yIndent;
 
-		for (int i = 0; i < asteroidsPerSpawn; i++)
+
+		for (int i = 0; i < asteroidsPerSpawn - currentAsteroidAmount ; i++)
 		{
 			// Choose the side along to which we wil generate a position.
 			// The generated position locates near chosen axis with some padding,
@@ -102,6 +106,6 @@ public class AsteroidSpawner : MonoBehaviour
 			}
 		}
 
-		return asteroidsPerSpawn;
+		return asteroidsPerSpawn - currentAsteroidAmount ;
 	}
 }

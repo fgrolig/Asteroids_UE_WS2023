@@ -148,6 +148,12 @@ public class Game : MonoBehaviour
 		{
 			activeAsteroidsCount = asteroidSpawner.SpawnAsteroids(OnAsteroidDestroy);
 		}
+		else if(asteroidSpawner.refillAsteroidsAtThreshold && activeAsteroidsCount <= asteroidSpawner.refillThreshold)
+		{
+			Debug.LogError(activeAsteroidsCount);
+			activeAsteroidsCount += asteroidSpawner.SpawnAsteroids(OnAsteroidDestroy, activeAsteroidsCount);
+			Debug.LogError(activeAsteroidsCount);
+		}
 	}
 
 	private void SaveHighScores()
