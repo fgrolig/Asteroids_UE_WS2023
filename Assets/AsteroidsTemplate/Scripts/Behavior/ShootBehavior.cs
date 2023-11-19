@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ShootBehavior : MonoBehaviour
 {
+	public static event Action BulletShotEvent;
 	[SerializeField]
 	private Pool bulletPool = default;
 
@@ -30,6 +32,8 @@ public class ShootBehavior : MonoBehaviour
 	{
 		if (Time.time > canShootTime)
 		{
+			BulletShotEvent?.Invoke();
+
 			canShootTime = Time.time + shootCooldownTime;
 
 			GameObject bullet = bulletPool.GetObject();

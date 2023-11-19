@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -20,7 +21,10 @@ public class Player : MonoBehaviour
 
 	public delegate void PlayerDestroy();
 	public event PlayerDestroy OnPlayerDestroy;
+	public bool InDeathAnimation { get; private set; } = false;
 
+	[Tooltip("If none is set the player will instantly disappear to then respawn. If an animation is set it delays for the length of the animation.")]
+	[SerializeField] private AnimationClip deathAnimationClip;
 	[SerializeField]
 	private SpriteRenderer playerSpriteRenderer = default;
 
@@ -77,6 +81,7 @@ public class Player : MonoBehaviour
 
 	[SerializeField]
 	private Game game;
+	
 
 	private void Awake()
 	{
@@ -103,16 +108,23 @@ public class Player : MonoBehaviour
 		}
 		
 		if (anim == null) anim = GetComponent<Animator>();
+
+		ShootBehavior.BulletShotEvent += OnBulletShot;
+	}
+
+	private void OnDestroy()
+	{
+		ShootBehavior.BulletShotEvent -= OnBulletShot;
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.gameObject.layer != LayerMask.NameToLayer("Asteroid")) return;
+		if (collision.gameObject.layer != LayerMask.NameToLayer("Asteroid") || InDeathAnimation) return;
 		if (IsInvulnerable == false)
 		{
 			if (destroyOnCollision || game.CurrentPlayerLifes == 1)
 			{
-				DestroyPlayer();
+				StartCoroutine(DestroyPlayer());
 			}
 			else
 			{
@@ -124,6 +136,9 @@ public class Player : MonoBehaviour
 
 	public void Respawn()
 	{
+		anim.ResetTrigger("Death");
+		anim.ResetTrigger("Shoot");
+		
 		switch (game.CurrentPlayerLifes)
 		{
 			case 3:
@@ -217,7 +232,7 @@ public class Player : MonoBehaviour
 		playerRigidbody2D.rotation += rotationForce * Time.deltaTime * rotationDirectionValue;
 	}
 
-	private void DestroyPlayer()
+	private IEnumerator DestroyPlayer()
 	{
 		if (destroyAudioClip != null)
 		{
@@ -234,8 +249,13 @@ public class Player : MonoBehaviour
 			}
 		}
 
-		OnPlayerDestroy?.Invoke();
+		anim.SetTrigger("Death");
 
+		InDeathAnimation = true;
+		yield return new WaitForSeconds(deathAnimationClip == null ? 0f : deathAnimationClip.length);
+		InDeathAnimation = false;
+
+		OnPlayerDestroy?.Invoke();
 		gameObject.SetActive(false);
 	}
 
@@ -261,5 +281,10 @@ public class Player : MonoBehaviour
 		}
 
 		IsInvulnerable = false;
+	}
+
+	private void OnBulletShot()
+	{
+		anim.SetTrigger("Shoot");
 	}
 }

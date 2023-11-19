@@ -15,7 +15,7 @@ public class PlayerInputController : MonoBehaviour
 
 	void Update()
 	{
-		if ((player.isActiveAndEnabled == true) && (Game.CurrentGameState == Game.GameState.Active))
+		if (player.isActiveAndEnabled && Game.CurrentGameState == Game.GameState.Active && !player.InDeathAnimation)
 		{
 			if (Input.GetAxisRaw("Vertical") > 0)
 			{
