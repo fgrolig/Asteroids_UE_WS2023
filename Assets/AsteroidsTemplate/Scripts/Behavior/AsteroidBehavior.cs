@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class AsteroidBehavior : MonoBehaviour
@@ -20,6 +21,9 @@ public class AsteroidBehavior : MonoBehaviour
 
 	[SerializeField] 
 	private GameObject objectToSpawnOnDestruction;
+	
+	[SerializeField] 
+	private bool matchRotationOnSpawn;
 
 	[SerializeField] 
 	private float timeUntilDestroySpawnedObject = -1f;
@@ -41,6 +45,8 @@ public class AsteroidBehavior : MonoBehaviour
 		if (objectToSpawnOnDestruction != null)
 		{
 			Instantiate(objectToSpawnOnDestruction, transform.position, Quaternion.identity);
+
+			if (matchRotationOnSpawn) objectToSpawnOnDestruction.transform.rotation = transform.rotation;
 
 			if (timeUntilDestroySpawnedObject >= 0)
 			{

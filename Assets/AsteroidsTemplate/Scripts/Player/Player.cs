@@ -41,14 +41,7 @@ public class Player : MonoBehaviour
 
 	[SerializeField]
 	private float maxAxisVelocity = 42f;
-
-	[Header("Destruction Settings")]
-	[SerializeField] 
-	private bool destroyOnCollision = true;
-
-	[SerializeField]
-	private GameObject objectToSpawnOnDestruction;
-
+	
 	[Header("Objects to enable on Collision")]
 	[SerializeField]
 	private GameObject objectToEnableAt3HP;
@@ -57,6 +50,19 @@ public class Player : MonoBehaviour
 	[SerializeField]
 	private GameObject objectToEnableAt1HP;
 
+	[Header("Destruction Settings")]
+	[SerializeField] 
+	private bool destroyOnCollision = true;
+
+	[SerializeField]
+	private GameObject objectToSpawnOnDestruction;
+	
+	[SerializeField] 
+	private bool matchPlayerRotationOnSpawn;
+	
+	[SerializeField] 
+	private bool parentToPlayer;
+	
 	[Tooltip("Time until the time spawned object is destroyed. Negative Values mean it will not be destroyed.")]
 	[SerializeField]
 	private float timeUntilDestroySpawnedObject = -1f;
@@ -242,6 +248,10 @@ public class Player : MonoBehaviour
 		if(objectToSpawnOnDestruction != null)
 		{
 			GameObject spawnedObject = Instantiate(objectToSpawnOnDestruction, transform.position, Quaternion.identity);
+			
+			if(matchPlayerRotationOnSpawn) objectToSpawnOnDestruction.transform.rotation = transform.rotation;
+			
+			if (parentToPlayer) objectToSpawnOnDestruction.transform.SetParent(transform);
 
 			if (timeUntilDestroySpawnedObject >= 0)
 			{
