@@ -20,6 +20,12 @@ public class AsteroidBehavior : MonoBehaviour
 
 	[SerializeField] 
 	private GameObject objectToSpawnOnDestruction;
+	
+	[SerializeField] 
+	private bool matchPlayerRotationOnSpawn;
+	
+	[SerializeField] 
+	private bool parentToPlayer;
 
 	[SerializeField] 
 	private float timeUntilDestroySpawnedObject = -1f;
@@ -41,6 +47,9 @@ public class AsteroidBehavior : MonoBehaviour
 		if (objectToSpawnOnDestruction != null)
 		{
 			Instantiate(objectToSpawnOnDestruction, transform.position, Quaternion.identity);
+
+			if (matchPlayerRotationOnSpawn) objectToSpawnOnDestruction.transform.rotation = player.transform.rotation;
+			if (parentToPlayer) objectToSpawnOnDestruction.transform.SetParent(player.transform);
 
 			if (timeUntilDestroySpawnedObject >= 0)
 			{
